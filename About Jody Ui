@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Voice Companion – About Jody</title>
+  <style>
+    :root {
+      --accent: #38bdf8;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --header: #f9fafb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.6), transparent 58%),
+        #020617;
+      line-height: 1.6;
+    }
+
+    .page {
+      width: min(960px, 100%);
+      margin: 40px auto 48px;
+      padding: 0 24px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 2.1rem;
+      letter-spacing: -0.03em;
+      color: var(--header);
+    }
+
+    .title-block p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .badge-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    main {
+      margin-top: 16px;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 1.7rem;
+      letter-spacing: -0.01em;
+      color: var(--header);
+    }
+
+    .section-subtitle {
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 760px;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .card {
+      padding: 14px 0 4px;
+    }
+
+    .card h3 {
+      margin: 6px 0 10px;
+      font-size: 1.2rem;
+      color: var(--header);
+    }
+
+    .card p {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+
+    .card ul {
+      margin: 6px 0 0 0;
+      padding-left: 22px;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .card ul li { margin-bottom: 6px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(45, 212, 191, 0.5);
+      padding: 5px 12px;
+      font-size: 0.85rem;
+      color: #a5f3fc;
+      margin-bottom: 8px;
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .title-block h1 {
+        font-size: 1.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <h1>Voice Companion for Jody</h1>
+        <p>Designing a simple, respectful way for Jody to be heard in everyday conversations.</p>
+      </div>
+      <div class="badge">
+        <span class="badge-dot"></span>
+        GNG2501 · Winter 2025
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <h2>About Jody</h2>
+        <p class="section-subtitle">
+          Jody uses an iPad and wants to take part in real conversations with the people around her.
+          Our goal is to make that participation smoother, faster and less tiring.
+        </p>
+
+        <div class="stack">
+          <!-- Block 1: situation -->
+          <article class="card">
+            <div class="pill">
+              <span class="pill-dot"></span>
+              Jody’s current situation
+            </div>
+            <h3>Communication challenges</h3>
+            <p>
+              Jody understands very well what is happening around her, but several factors make it hard
+              for her to speak and be heard in time.
+            </p>
+            <ul>
+              <li>Speaking can be <span class="highlight">slow or tiring</span>, especially in noisy or stressful settings.</li>
+              <li>Existing tablet tools require many precise taps, menus and navigation steps.</li>
+              <li>She often depends on someone else to quickly say a short phrase or answer a question.</li>
+            </ul>
+          </article>
+
+          <!-- Block 2: what we do -->
+          <article class="card">
+            <div class="pill">
+              <span class="pill-dot"></span>
+              What our solution aims to do
+            </div>
+            <h3>How we want to help</h3>
+            <p>
+              The solution focuses on supporting Jody’s voice, not replacing it.
+              We want to make it easier for her to join and follow conversations.
+            </p>
+            <ul>
+              <li>Provide a <span class="highlight">simple and fast</span> way for Jody to be heard from her iPad.</li>
+              <li>Make common daily phrases easy to access and play when she needs them.</li>
+              <li>Reduce the effort needed to communicate so she can focus on the interaction itself.</li>
+              <li>Increase her <span class="highlight">autonomy and social participation</span> in different environments.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
