@@ -1,6 +1,6 @@
-# Voiceitt Live Client (Python)
+# ClearSpeak - Live Audio Transcriber for Atypical Speech Patterns (Python)
 
-Small Python client using the official `voiceitt-sdk-py` to:
+Small Python client using the official **Voiceitt's API** and `voiceitt-sdk-py` to:
 - Authenticate via app id/api key (speaker-independent) or email/password (personalized).
 - Stream microphone audio to Voiceitt over WebSocket (real-time recognition).
 - Transcribe a local audio file over HTTP.
