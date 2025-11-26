@@ -41,6 +41,7 @@ Options:
 - `--chunk-ms 250` send interval in ms
 - `--save-audio` ask Voiceitt to save audio server-side (false by default)
 - Filenames with spaces are fine; wrap the full path in quotes when using `--file`.
+- `--device` microphone device index or name (use `python -c "import sounddevice as sd; import pprint; pprint.pp(sd.query_devices())"` to list; set `PYTHONIOENCODING=utf-8` if your shell chokes on Unicode).
 
 ## Notes
 - Do not commit real credentials; use env vars or a private `.env`.

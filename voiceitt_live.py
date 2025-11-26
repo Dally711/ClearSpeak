@@ -58,6 +58,7 @@ def stream_microphone_ws(
     chunk_ms: int,
     save_audio: bool,
     show_debug_logs: bool,
+    device: str | None,
 ):
     audio_queue: queue.Queue[np.ndarray] = queue.Queue()
     stop_event = threading.Event()
@@ -69,33 +70,47 @@ def stream_microphone_ws(
         audio_queue.put(indata.copy())
 
     blocksize = int(rate * (chunk_ms / 1000))
-    stream = sd.InputStream(
-        samplerate=rate,
-        channels=1,
-        dtype="float32",
-        blocksize=blocksize,
-        callback=audio_callback,
-    )
+    # Allow selecting a specific input device by index or name
+    sd_device = None
+    if device is not None:
+        try:
+            sd_device = int(device)
+        except ValueError:
+            sd_device = device
+
+    logging.debug("Opening input stream (device=%s, rate=%s, chunk_ms=%s)", sd_device, rate, chunk_ms)
+    try:
+        stream = sd.InputStream(
+            samplerate=rate,
+            channels=1,
+            dtype="float32",
+            blocksize=blocksize,
+            callback=audio_callback,
+            device=sd_device,
+        )
+    except Exception as exc:  # pragma: no cover - live device path
+        logging.error("Failed to open microphone (device=%s, rate=%s): %s", sd_device, rate, exc)
+        return
 
     def on_ready_changed(is_ready: bool):
-        logging.info("Model ready: %s", is_ready)
+        logging.debug("Model ready: %s", is_ready)
         if is_ready:
             ready_event.set()
         else:
             ready_event.clear()
 
-def on_partial_recognition(data):
-    text = data.get("text") or data.get("unstable_text")
-    if text:
-        logging.info("Partial: %s", text)
+    def on_partial_recognition(data):
+        text = data.get("text") or data.get("unstable_text")
+        if text:
+            logging.info("Partial: %s", text)
 
-def on_recognition(data):
-    text = data.get("text")
-    if text:
-        logging.info("Final: %s", text)
+    def on_recognition(data):
+        text = data.get("text")
+        if text:
+            logging.info("Final: %s", text)
 
-def on_error(data):
-    logging.error("Error: %s", data)
+    def on_error(data):
+        logging.error("Error: %s", data)
 
     ws = VoiceittWebsocket(
         auth_provider,
@@ -107,7 +122,7 @@ def on_error(data):
 
     def sender():
         ready_event.wait()
-        logging.info("Starting to send microphone audio")
+        logging.debug("Starting to send microphone audio")
         while not stop_event.is_set():
             try:
                 chunk = audio_queue.get(timeout=0.2)
@@ -119,20 +134,25 @@ def on_error(data):
     sender_thread = threading.Thread(target=sender, daemon=True)
 
     def shutdown(*_):
+        if stop_event.is_set():
+            return
         stop_event.set()
-        ws.close()
-        stream.stop()
-        stream.close()
-        logging.info("Stopped")
+        try:
+            ws.close()
+        except Exception:
+            pass
+        try:
+            stream.stop()
+            stream.close()
+        except Exception:
+            pass
+        logging.debug("Stopped")
 
-    signal.signal(signal.SIGINT, shutdown)
-    signal.signal(signal.SIGTERM, shutdown)
-
-    logging.info("Connecting to Voiceitt WebSocket")
+    logging.debug("Connecting to Voiceitt WebSocket")
     options = VoiceittWebsocketOptions(
         save_audio=save_audio,
         show_debug_logs=show_debug_logs,
-        handle_sigint=False,  # let our handler manage Ctrl+C
+        handle_sigint=False,
     )
     try:
         ws.connect(options)
@@ -141,12 +161,21 @@ def on_error(data):
         return
     sender_thread.start()
 
-    logging.info("Opening microphone (rate=%s, chunk=%sms)", rate, chunk_ms)
+    # Run the websocket wait loop in its own thread so Ctrl+C can interrupt the main thread.
+    ws_thread = threading.Thread(target=ws.wait, daemon=True)
+    ws_thread.start()
+
+    logging.debug("Opening microphone (rate=%s, chunk=%sms)", rate, chunk_ms)
     try:
         with stream:
-            ws.wait()
+            while ws_thread.is_alive():
+                time.sleep(0.1)
     except KeyboardInterrupt:
         shutdown()
+    finally:
+        shutdown()
+        ws_thread.join(timeout=1.0)
+        sender_thread.join(timeout=1.0)
 
 
 def transcribe_file_http(
@@ -207,6 +236,10 @@ def parse_args():
         action="store_true",
         help="Enable verbose WebSocket logs from the SDK",
     )
+    ws_parser.add_argument(
+        "--device",
+        help="Input device index or name for microphone (see sounddevice.query_devices)",
+    )
 
     http_parser = subparsers.add_parser("http", help="Transcribe a file over HTTP")
     http_parser.add_argument("--file", required=True, help="Path to audio file")
@@ -223,6 +256,10 @@ def main():
         level=getattr(logging, args.log_level),
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
+    if args.log_level != "DEBUG":
+        logging.getLogger("httpx").setLevel(logging.WARNING)
+        logging.getLogger("socketio").setLevel(logging.WARNING)
+        logging.getLogger("engineio").setLevel(logging.WARNING)
 
     missing = [name for name, val in [("app-id", args.app_id), ("api-key", args.api_key)] if not val]
     if missing:
@@ -248,6 +285,7 @@ def main():
             chunk_ms=args.chunk_ms,
             save_audio=args.save_audio,
             show_debug_logs=args.ws_debug,
+            device=args.device,
         )
     elif args.mode == "http":
         transcribe_file_http(
