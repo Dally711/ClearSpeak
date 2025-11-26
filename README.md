@@ -4,6 +4,7 @@ Small Python client using the official **Voiceitt's API** and `voiceitt-sdk-py` 
 - Authenticate via app id/api key (speaker-independent) or email/password (personalized).
 - Stream microphone audio to Voiceitt over WebSocket (real-time recognition).
 - Transcribe a local audio file over HTTP.
+- **New:** serve a lightweight web UI (Flask) to upload a WAV and get a transcription.
 
 ## Context
 Built for a school project to support a client who survived a traumatic brain injury. The goal is to make communication with others easier and faster by leveraging Voiceitt’s API for personalized speech-to-text. This repo holds a minimal, testable client so we can quickly validate recognition quality for our user.
@@ -42,6 +43,13 @@ Options:
 - `--save-audio` ask Voiceitt to save audio server-side (false by default)
 - Filenames with spaces are fine; wrap the full path in quotes when using `--file`.
 - `--device` microphone device index or name (use `python -c "import sounddevice as sd; import pprint; pprint.pp(sd.query_devices())"` to list; set `PYTHONIOENCODING=utf-8` if your shell chokes on Unicode).
+
+## Web UI (Flask)
+- Start the server (uses the same VOICEITT_* env vars):
+  ```bash
+  python web_app.py
+  ```
+- Open http://localhost:5000 in your browser, choose a WAV file, and click Transcribe. The backend signs in with your configured Voiceitt credentials and returns the recognized text.
 
 ## Notes
 - Do not commit real credentials; use env vars or a private `.env`.
