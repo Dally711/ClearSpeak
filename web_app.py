@@ -50,6 +50,10 @@ def create_app():
     def team_page():
         return send_from_directory(app.static_folder, "Team.html")
 
+    @app.route("/upload")
+    def upload_page():
+        return send_from_directory(app.static_folder, "upload.html")
+
     @app.route("/api/transcribe", methods=["POST"])
     def transcribe():
         if "file" not in request.files:
