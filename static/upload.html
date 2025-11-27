@@ -160,6 +160,21 @@
     const resultEl = document.getElementById('result');
     const statusPill = document.getElementById('status-pill');
 
+    function speak(text) {
+      if (!text || typeof text !== 'string') return;
+      if (!('speechSynthesis' in window)) return;
+      try {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.rate = 1.0;
+        utter.pitch = 1.0;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        console.warn('speechSynthesis failed', e);
+      }
+    }
+
     function setStatus(text, tone = 'neutral') {
       statusPill.textContent = text;
       statusPill.classList.remove('success', 'error');
@@ -222,6 +237,9 @@
         const transcript = data.text || "No voice detected";
         resultEl.textContent = transcript;
         setStatus('Done', 'success');
+        if (data.text) {
+          speak(transcript);
+        }
       } catch (err) {
         resultEl.textContent = err.message;
         setStatus('Error', 'error');
