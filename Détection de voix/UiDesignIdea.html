@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClearSpeak | Voice Transcriber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-blue: #3A6FF7;
+      --text: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Montserrat", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: var(--brand-blue);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.45s ease;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid rgba(255, 255, 255, 0.75);
+      outline-offset: 3px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      
+    }
+
+    .accents {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .accent {
+      position: absolute;
+      filter: blur(30px);
+      opacity: 0.55;
+      transform: rotate(-8deg);
+    }
+
+    .accent-1 {
+      width: 320px;
+      height: 220px;
+      background: linear-gradient(135deg, #5CE6FF, #B2C7FF);
+      top: -40px;
+      left: 60px;
+    }
+
+    .accent-2 {
+      width: 380px;
+      height: 260px;
+      background: linear-gradient(135deg, #2F5FD4, #5CE6FF);
+      bottom: -80px;
+      right: -60px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-main {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .brand-by {
+      font-size: 18px;
+      font-weight: 600;
+      opacity: 0.9;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-logo {
+      height: 52px;
+      width: auto;
+      display: inline-block;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      font-size: 15px;
+      text-transform: uppercase;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(92, 230, 255, 0.8);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s ease;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a:focus-visible::after {
+      transform: scaleX(1);
+    }
+
+    main {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 18px 24px;
+    }
+
+    .screen-button {
+      position: absolute;
+      inset: 0;
+      top: 0;
+      border: none;
+      padding: 0;
+      margin: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      z-index: 4;
+    }
+
+    .content-shell {
+      position: relative;
+      z-index: 2;
+      max-width: 840px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 18px;
+      border-radius: 26px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      overflow: visible;
+    }
+
+    .glow-ring { display: none; }
+
+    .content {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      gap: 14px;
+      pointer-events: none;
+    }
+
+    .hero {
+      display: grid;
+      gap: 10px;
+      align-items: center;
+      justify-items: center;
+      text-align: center;
+      transition: transform 0.45s ease, gap 0.35s ease;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 5vw + 6px, 72px);
+      letter-spacing: 0.03em;
+      transition: transform 0.4s ease, letter-spacing 0.35s ease;
+    }
+
+    .tagline {
+      margin: 0;
+      font-size: clamp(16px, 2vw + 4px, 22px);
+      font-weight: 400;
+      opacity: 0.9;
+      letter-spacing: 0.02em;
+      transition: opacity 0.3s ease;
+    }
+
+    .cta {
+      font-size: clamp(18px, 2vw + 6px, 26px);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .transcription-block {
+      max-width: 920px;
+      width: 100%;
+      margin: 0 auto;
+      transition: transform 0.45s ease, opacity 0.45s ease, max-width 0.45s ease;
+    }
+
+    .transcription {
+      margin-top: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 18px;
+      padding: 22px 24px 20px;
+      min-height: 190px;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.6;
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      transition: min-height 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .transcription label {
+      display: block;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+      font-size: 15px;
+      opacity: 0.9;
+    }
+
+    .placeholder {
+      opacity: 0.9;
+      font-size: 20px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      padding: 12px;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      opacity: 0.9;
+      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.1));
+      backdrop-filter: blur(4px);
+      z-index: 5;
+    }
+
+    /* Recording transition states */
+    body:not(.is-recording) .transcription-block {
+      opacity: 0.92;
+      transform: translateY(10px) scale(0.97);
+      max-width: 760px;
+    }
+
+    body.is-recording .hero {
+      transform: translateY(-90px) scale(0.8);
+      gap: 6px;
+    }
+
+    body:not(.is-recording) .hero {
+      transform: translateY(-30px);
+    }
+
+    body.is-recording .transcription-block {
+      opacity: 1;
+      transform: translateY(-60px) scale(1.01);
+      max-width: 980px;
+    }
+
+    body.is-recording .content {
+      gap: 6px;
+    }
+
+    /* Keep color constant when recording */
+    body.is-recording {
+      background: var(--brand-blue);
+    }
+
+    body.is-recording .transcription {
+      min-height: 240px;
+      transform: scale(1.01);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        0 10px 30px rgba(0, 0, 0, 0.18);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+  </style>
+</head>
+  <body>
+  <div class="accents" aria-hidden="true">
+    <span class="accent accent-1"></span>
+    <span class="accent accent-2"></span>
+  </div>
+  <nav aria-label="Primary navigation">
+    <div class="brand">
+      <span class="brand-main">ClearSpeak</span>
+      <span class="brand-by">by</span>
+      <img class="brand-logo" src="InnovaSpeechLogo.png" alt="InnovaSpeech logo">
+    </div>
+    <div class="nav-links">
+      <a href="#" aria-label="Home">Home</a>
+      <a href="#" aria-label="About">About</a>
+      <a href="#" aria-label="Team">Team</a>
+    </div>
+  </nav>
+
+  <main>
+    <button class="screen-button" aria-label="Press anywhere to start or stop recording"></button>
+    <div class="content-shell">
+      <div class="glow-ring" aria-hidden="true"></div>
+      <div class="content">
+        <div class="hero">
+          <h1>ClearSpeak</h1>
+          <p class="tagline">Communicate Simply Everywhere</p>
+          <p class="cta" id="ctaText">Press anywhere to start / stop recording</p>
+        </div>
+        <section class="transcription-block">
+          <section class="transcription" aria-live="polite" aria-label="Transcribed text area">
+            <label for="transcribedText">Transcribed text</label>
+            <div id="transcribedText" class="placeholder">Your words will appear here in real time.</div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer>Built for clear, effortless communication.</footer>
+
+  <script>
+    (() => {
+      const screenButton = document.querySelector(".screen-button");
+      const cta = document.getElementById("ctaText");
+      const transcript = document.getElementById("transcribedText");
+      const body = document.body;
+      let recording = false;
+
+      const updateUI = () => {
+        body.classList.toggle("is-recording", recording);
+        cta.textContent = recording ? "Press anywhere to stop recording" : "Press anywhere to start / stop recording";
+        transcript.textContent = recording
+          ? "Listening... your words will land here."
+          : "Your words will appear here in real time.";
+      };
+
+      screenButton.addEventListener("click", () => {
+        recording = !recording;
+        updateUI();
+      });
+
+      updateUI();
+    })();
+  </script>
+</body>
+</html>

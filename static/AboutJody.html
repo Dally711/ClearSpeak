@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ClearSpeak | Team</title>
+  <title>ClearSpeak | About Jody</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      overflow: hidden;
+      overflow-y: auto;
     }
     a { color: inherit; text-decoration: none; font-weight: 600; letter-spacing: 0.01em; }
     a:focus-visible { outline: 3px solid rgba(255,255,255,0.75); outline-offset: 3px; }
@@ -49,22 +49,20 @@
     .nav-links a { position: relative; padding-bottom: 4px; }
     .nav-links a::after { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: rgba(92, 230, 255, 0.8); transform: scaleX(0); transform-origin: left; transition: transform 0.2s ease; }
     .nav-links a:hover::after, .nav-links a:focus-visible::after { transform: scaleX(1); }
-    main { flex: 1; position: relative; padding: 24px 18px 32px; max-width: 960px; margin: 0 auto; z-index: 2; display: flex; flex-direction: column; gap: 16px; }
+    main { flex: 1; position: relative; padding: 24px 18px 32px; max-width: 960px; margin: 0 auto; z-index: 2; }
     .card {
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 16px;
       padding: 18px;
       box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+      margin-bottom: 16px;
     }
     h1 { margin: 0 0 12px; font-size: 32px; letter-spacing: 0.02em; }
     h2 { margin: 10px 0 8px; }
-    p { margin: 0 0 14px; color: var(--muted); line-height: 1.6; }
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-    .member-card { padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 10px 26px rgba(0,0,0,0.12); }
-    .member-name { font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .member-email { color: var(--muted); font-size: 0.95rem; }
-    .team-note { margin-top: 8px; color: var(--muted); }
+    p, ul { color: var(--muted); line-height: 1.6; }
+    ul { padding-left: 20px; }
+    ul li { margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -81,40 +79,33 @@
     <div class="nav-links">
       <a href="/" aria-label="Home">Home</a>
       <a href="/about" aria-label="About Jody">About Jody</a>
-      <a href="/team" aria-label="Team"><strong>Team</strong></a>
+      <a href="/team" aria-label="Team">Team</a>
     </div>
   </nav>
 
   <main>
     <div class="card">
-      <h1>Our Team</h1>
-      <p>Five students collaborating to understand Jody’s needs and refine a solution that fits her daily life.</p>
+      <h1>About Jody</h1>
+      <p>Jody uses the Grid 3 software, which can be challenging to use because it often requires multiple steps to express simple messages, making communication slower and more effortful during real conversations. Our goal is to make that participation smoother, faster, and less tiring.</p>
     </div>
     <div class="card">
-      <h2>Members</h2>
-      <div class="team-grid">
-        <div class="member-card">
-          <div class="member-name">Ismail Khayati</div>
-          <div class="member-email">ikhay036@uottawa.ca</div>
-        </div>
-        <div class="member-card">
-          <div class="member-name">Saad Mehamdi</div>
-          <div class="member-email">smeha063@uottawa.ca</div>
-        </div>
-        <div class="member-card">
-          <div class="member-name">Paulin Prize</div>
-          <div class="member-email">ppris062@uottawa.ca</div>
-        </div>
-        <div class="member-card">
-          <div class="member-name">Jaime D. Tapa</div>
-          <div class="member-email">jtapa075@uottawa.ca</div>
-        </div>
-        <div class="member-card">
-          <div class="member-name">Hiba Tantawi</div>
-          <div class="member-email">htant016@uottawa.ca</div>
-        </div>
-      </div>
-      <p class="team-note">Each member contributes to interviews, feedback sessions, and design decisions to keep the solution aligned with real needs.</p>
+      <h2>Communication challenges</h2>
+      <p>Jody understands well, but several factors make it hard to speak and be heard in time:</p>
+      <ul>
+        <li>Speaking can be slow or tiring, especially in noisy or stressful settings.</li>
+        <li>Existing tablet tools require many precise taps, menus, and navigation steps.</li>
+        <li>She often depends on someone else to quickly say a short phrase or answer a question.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>How we want to help</h2>
+      <p>The solution focuses on supporting Jody’s voice, not replacing it. We want to make it easier for her to join and follow conversations:</p>
+      <ul>
+        <li>Provide a simple and fast way for Jody to be heard from her iPad.</li>
+        <li>Make common daily phrases easy to access and play when she needs them.</li>
+        <li>Reduce the effort so she can focus on the interaction itself.</li>
+        <li>Increase her autonomy and social participation in different environments.</li>
+      </ul>
     </div>
   </main>
 </body>

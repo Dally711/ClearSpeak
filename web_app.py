@@ -42,21 +42,13 @@ def create_app():
     def index():
         return send_from_directory(app.static_folder, "index.html")
 
-    @app.route("/upload")
-    def upload_page():
-        return send_from_directory(app.static_folder, "upload.html")
-
     @app.route("/about")
     def about_page():
-        return send_from_directory(app.static_folder, "about.html")
+        return send_from_directory(app.static_folder, "AboutJody.html")
 
     @app.route("/team")
     def team_page():
-        return send_from_directory(app.static_folder, "team.html")
-
-    @app.route("/contact")
-    def contact_page():
-        return send_from_directory(app.static_folder, "contact.html")
+        return send_from_directory(app.static_folder, "Team.html")
 
     @app.route("/api/transcribe", methods=["POST"])
     def transcribe():
