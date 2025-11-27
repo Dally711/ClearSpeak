@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClearSpeak Upload</title>
+  <style>
+    :root {
+      --bg: #f5f5f5;
+      --panel: #ffffff;
+      --accent: #3a6ff7;
+      --text: #1f2933;
+      --muted: #4b5563;
+      --success: #15803d;
+      --error: #b91c1c;
+      --border: #d5d7db;
+      --shadow: 0 18px 60px rgba(10, 34, 64, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(58,111,247,0.1), transparent 30%), var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    }
+    .nav-brand {
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 10px;
+    }
+    .nav-links a:hover {
+      background: rgba(58,111,247,0.1);
+      color: var(--text);
+    }
+    .cta {
+      padding: 10px 14px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(58,111,247,0.25);
+    }
+    .page {
+      max-width: 1200px;
+      margin: 28px auto 40px;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .card {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      letter-spacing: -0.01em;
+    }
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .dropzone {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .dropzone:hover {
+      border-color: var(--accent);
+      background: rgba(58, 111, 247, 0.08);
+      transform: translateY(-1px);
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(58,111,247,0.25); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(58,111,247,0.12); color: var(--text); margin-top: 12px; }
+    .pill.success { background: rgba(21,128,61,0.12); color: var(--success); }
+    .pill.error { background: rgba(185,28,28,0.12); color: var(--error); }
+    .result {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      font-size: 16px;
+      white-space: pre-wrap;
+      min-height: 48px;
+    }
+    input[type="file"] { display: none; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-brand">ClearSpeak by InnovaSpeech</div>
+    <nav class="nav-links">
+      <a href="/"><strong>Home</strong></a>
+      <a href="/upload" class="cta">Upload</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="card">
+      <h1>Upload Audio</h1>
+      <p>Choose an audio file (WAV recommended; other formats will be converted automatically) and we’ll transcribe it through your Voiceitt credentials.</p>
+      <label class="dropzone" for="file-input" id="dropzone">
+        <strong>Click to choose a file</strong>
+        <div class="status" id="filename">No file selected</div>
+      </label>
+      <input id="file-input" type="file" accept=".wav,audio/wav,audio/*,video/*" />
+      <div class="actions">
+        <button id="submit-btn" disabled>Transcribe</button>
+        <span class="pill" id="status-pill">Idle</span>
+      </div>
+      <div class="result" id="result"></div>
+    </div>
+  </main>
+
+  <script>
+    const fileInput = document.getElementById('file-input');
+    const dropzone = document.getElementById('dropzone');
+    const submitBtn = document.getElementById('submit-btn');
+    const filenameEl = document.getElementById('filename');
+    const resultEl = document.getElementById('result');
+    const statusPill = document.getElementById('status-pill');
+
+    function setStatus(text, tone = 'neutral') {
+      statusPill.textContent = text;
+      statusPill.classList.remove('success', 'error');
+      if (tone === 'success') statusPill.classList.add('success');
+      if (tone === 'error') statusPill.classList.add('error');
+    }
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (file) {
+        filenameEl.textContent = file.name;
+        submitBtn.disabled = false;
+      } else {
+        filenameEl.textContent = 'No file selected';
+        submitBtn.disabled = true;
+      }
+    });
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = 'var(--accent)';
+    });
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.style.borderColor = 'var(--border)';
+    });
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = 'var(--border)';
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        fileInput.dispatchEvent(new Event('change'));
+      }
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      submitBtn.disabled = true;
+      setStatus('Transcribing...', 'neutral');
+      resultEl.textContent = '';
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const resp = await fetch('/api/transcribe', {
+          method: 'POST',
+          body: formData,
+        });
+        const ct = resp.headers.get('content-type') || '';
+        let data;
+        if (ct.includes('application/json')) {
+          data = await resp.json();
+        } else {
+          const text = await resp.text();
+          data = { text };
+        }
+        if (!resp.ok) throw new Error(data.error || data.text || 'Transcription failed');
+        const transcript = data.text || "No voice detected";
+        resultEl.textContent = transcript;
+        setStatus('Done', 'success');
+      } catch (err) {
+        resultEl.textContent = err.message;
+        setStatus('Error', 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

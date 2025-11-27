@@ -99,13 +99,6 @@
       font-weight: 700;
       font-size: 13px;
     }
-    .hero-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-    }
     .page {
       max-width: 1200px;
       margin: 0 auto 40px;
@@ -190,13 +183,13 @@
 </head>
 <body>
   <header class="nav">
-    <div class="nav-brand">ClearSpeak</div>
+    <div class="nav-brand">ClearSpeak by InnovaSpeech</div>
     <nav class="nav-links">
       <a href="#home">Home</a>
       <a href="#about">About</a>
       <a href="#team">Team</a>
       <a href="#contact">Contact</a>
-      <a href="/static/upload.html" class="cta">Upload</a>
+      <a href="/upload" class="cta">Upload</a>
     </nav>
   </header>
 
@@ -211,40 +204,17 @@
           <span class="hero-badge">Voiceitt-powered</span>
         </div>
       </div>
-      <div class="hero-card">
-        <p><strong>Quick tips</strong></p>
-        <p style="margin-bottom:8px;">Speak close to the mic; we auto-stop after a few seconds. The clip is sent to your configured Voiceitt credentials.</p>
-        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-          <a class="cta-link" href="/static/upload.html">Go to Upload</a>
-        </div>
-      </div>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2>Live Mic (records a short clip)</h2>
-        <p>Record a quick message from your microphone; the clip will be sent to the server and transcribed.</p>
+        <h2>Live Transcription</h2>
         <div class="actions">
           <button id="record-btn">Start Recording</button>
           <span class="pill" id="record-status">Idle</span>
         </div>
         <div class="result" id="live-result"></div>
       </div>
-    </div>
-
-    <div class="card" id="about">
-      <h2>About Us</h2>
-      <p>ClearSpeak is focused on making communication easier for people with atypical speech patterns. We leverage Voiceitt to deliver personalized speech-to-text in a simple, accessible UI.</p>
-    </div>
-
-    <div class="card" id="team">
-      <h2>Team</h2>
-      <p>A small student team working with users like Jodi to tailor this tool to real needs. We prioritize quick, low-effort interactions for users with mobility challenges.</p>
-    </div>
-
-    <div class="card" id="contact">
-      <h2>Contact</h2>
-      <p>Questions or feedback? Reach us via your project coordinator or course workspace. Suggestions to improve accuracy and accessibility are welcome.</p>
     </div>
 
   </main>
@@ -279,7 +249,20 @@
           data = { text };
         }
         if (!resp.ok) throw new Error(data.error || data.text || 'Transcription failed');
-        targetEl.textContent = data.text || JSON.stringify(data.raw);
+        const transcript = data.text || "No voice detected";
+        targetEl.textContent = transcript;
+        if (data.text) {
+          try {
+            const utter = new SpeechSynthesisUtterance(transcript);
+            utter.lang = 'en-US';
+            utter.rate = 1.0;
+            utter.pitch = 1.0;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utter);
+          } catch (e) {
+            console.warn('speechSynthesis failed', e);
+          }
+        }
         statusEl('Done', 'success');
       } catch (err) {
         targetEl.textContent = err.message;
