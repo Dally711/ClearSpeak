@@ -1,5 +1,12 @@
 # ClearSpeak - Live Audio Transcriber for Atypical Speech Patterns (Python)
 
+
+## Demo Video
+<video width="700" controls>
+  <source src="ClearSpeak demo.mp4" type="video/mp4">
+  Your browser does not support video playback.
+</video>
+
 Small Python client using the official **Voiceitt's API** and `voiceitt-sdk-py` to:
 - Authenticate via app id/api key (speaker-independent) or email/password (personalized).
 - Stream microphone audio to Voiceitt over WebSocket (real-time recognition).
