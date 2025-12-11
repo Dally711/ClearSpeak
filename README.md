@@ -2,9 +2,10 @@
 
 
 ## Demo Video
+
 <video width="700" controls>
-  <source src="ClearSpeak demo.mp4" type="video/mp4">
-  Your browser does not support video playback.
+  <source src="https://raw.githubusercontent.com/Dally711/ClearSpeak/main/ClearSpeak%20demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
 </video>
 
 Small Python client using the official **Voiceitt's API** and `voiceitt-sdk-py` to:
