@@ -3,10 +3,8 @@
 
 ## Demo Video
 
-<video width="700" controls>
-  <source src="https://raw.githubusercontent.com/Dally711/ClearSpeak/main/ClearSpeak%20demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/d907efc9-620a-4189-b2bc-ef1525e63eb9
+
 
 Small Python client using the official **Voiceitt's API** and `voiceitt-sdk-py` to:
 - Authenticate via app id/api key (speaker-independent) or email/password (personalized).
