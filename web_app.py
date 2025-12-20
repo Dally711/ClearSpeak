@@ -3,9 +3,10 @@ import os
 import shutil
 import subprocess
 import tempfile
+from functools import wraps
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, session, redirect, url_for, render_template
 from voiceitt_sdk_py.http import TranscribeOptions, VoiceittHttp
 
 from voiceitt_live import build_auth_email, build_auth_user
@@ -37,24 +38,61 @@ def create_app():
     )
 
     app = Flask(__name__, static_folder="static", static_url_path="")
+    app.secret_key = os.environ.get("FLASK_SECRET_KEY")
+    app_password = os.environ.get("APP_PASSWORD")
+
+    if not app.secret_key:
+        raise RuntimeError("FLASK_SECRET_KEY environment variable is required")
+    if not app_password:
+        raise RuntimeError("APP_PASSWORD environment variable is required")
+
+    def login_required(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            if session.get("authenticated"):
+                return view(*args, **kwargs)
+            return redirect(url_for("login", next=request.path))
+
+        return wrapped
+
+    @app.route("/login", methods=["GET", "POST"])
+    def login():
+        if request.method == "POST":
+            password = request.form.get("password", "")
+            if password == app_password:
+                session["authenticated"] = True
+                dest = request.args.get("next") or url_for("index")
+                return redirect(dest)
+            return render_template("login.html", error="Incorrect password.")
+        return render_template("login.html")
+
+    @app.route("/logout")
+    def logout():
+        session.clear()
+        return redirect(url_for("login"))
 
     @app.route("/")
+    @login_required
     def index():
         return send_from_directory(app.static_folder, "index.html")
 
     @app.route("/about")
+    @login_required
     def about_page():
         return send_from_directory(app.static_folder, "AboutJody.html")
 
     @app.route("/team")
+    @login_required
     def team_page():
         return send_from_directory(app.static_folder, "Team.html")
 
     @app.route("/upload")
+    @login_required
     def upload_page():
         return send_from_directory(app.static_folder, "upload.html")
 
     @app.route("/api/transcribe", methods=["POST"])
+    @login_required
     def transcribe():
         if "file" not in request.files:
             return jsonify({"error": "file is required"}), 400

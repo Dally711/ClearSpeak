@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: "Segoe UI", Arial, sans-serif; display: grid; place-items: center; min-height: 100vh; background: #f4f6fb; margin: 0; }
+    form { background: #fff; width: 320px; padding: 24px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+    h3 { margin: 0 0 12px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    input { width: 100%; padding: 10px; border: 1px solid #d6d9e0; border-radius: 6px; margin-bottom: 12px; font-size: 15px; }
+    button { width: 100%; padding: 10px; background: #3a6ff7; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    .error { color: #c0392b; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <form method="post">
+    <h3>Enter Password</h3>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" required autofocus>
+    <button type="submit">Unlock</button>
+  </form>
+</body>
+</html>
