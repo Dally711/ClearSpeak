@@ -31,23 +31,23 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
     .brand img {
-      height: 44px;
+      height: 48px;
       width: auto;
     }
     .brand h1 {
       margin: 0;
       font-size: 22px;
       letter-spacing: 0.01em;
+      color: #0f1b3d;
     }
-    .brand span {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #4a5a88;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+    .brand .by {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1f3f9c;
+      margin-right: 4px;
     }
     h2 {
       margin: 4px 0 0;
@@ -90,11 +90,9 @@
 <body>
   <form class="card" method="post">
     <div class="brand">
+      <h1>ClearSpeak</h1>
+      <span class="by">by</span>
       <img src="{{ url_for('static', filename='InnovaSpeechLogo.png') }}" alt="InnovaSpeech logo">
-      <div>
-        <h1>ClearSpeak</h1>
-        <span>by InnovaSpeech</span>
-      </div>
     </div>
     <h2>Enter Password</h2>
     {% if error %}<div class="error">{{ error }}</div>{% endif %}
