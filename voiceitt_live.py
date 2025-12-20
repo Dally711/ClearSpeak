@@ -10,7 +10,7 @@ from pathlib import Path
 
 import httpx
 import numpy as np
-import sounddevice as sd
+sd = None
 
 from voiceitt_sdk_py.voiceitt_auth_provider import VoiceittApi, VoiceittAuthProvider
 from voiceitt_sdk_py.http import TranscribeOptions, VoiceittHttp
@@ -60,6 +60,15 @@ def stream_microphone_ws(
     show_debug_logs: bool,
     device: str | None,
 ):
+    # Lazy import to avoid PortAudio dependency when not using microphone streaming
+    global sd
+    if sd is None:
+        try:
+            import sounddevice as sd  # type: ignore
+        except Exception as exc:  # pragma: no cover - import error path
+            logging.error("sounddevice/PortAudio not available: %s", exc)
+            return
+
     audio_queue: queue.Queue[np.ndarray] = queue.Queue()
     stop_event = threading.Event()
     ready_event = threading.Event()
