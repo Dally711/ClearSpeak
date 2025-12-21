@@ -10,7 +10,7 @@ Small Python client using the official **Voiceitt's API** and `voiceitt-sdk-py` 
 - Authenticate via app id/api key (speaker-independent) or email/password (personalized).
 - Stream microphone audio to Voiceitt over WebSocket (real-time recognition).
 - Transcribe a local audio file over HTTP.
-- **New:** serve a lightweight web UI (Flask) to upload a WAV and get a transcription.
+- Serve a lightweight Flask web UI (with a simple password gate) to use the ClearSpeak experience.
 
 ## Context
 Built for a school project to support a client who survived a traumatic brain injury. The goal is to make communication with others easier and faster by leveraging Voiceitt’s API for personalized speech-to-text. This repo holds a minimal, testable client so we can quickly validate recognition quality for our user.
@@ -26,6 +26,7 @@ Built for a school project to support a client who survived a traumatic brain in
    - `VOICEITT_API_KEY`
    - For personalized: `VOICEITT_EMAIL` and `VOICEITT_PASSWORD`
    - For speaker-independent: optional `VOICEITT_USER_ID`
+   - For the web gate: `APP_PASSWORD` (shared password) and `FLASK_SECRET_KEY` (random secret for sessions)
 
 ## Usage
 Real-time mic (personalized via email/password):
@@ -51,11 +52,19 @@ Options:
 - `--device` microphone device index or name (use `python -c "import sounddevice as sd; import pprint; pprint.pp(sd.query_devices())"` to list; set `PYTHONIOENCODING=utf-8` if your shell chokes on Unicode).
 
 ## Web UI (Flask)
-- Start the server (uses the same VOICEITT_* env vars):
+- Start the server (uses VOICEITT_* plus APP_PASSWORD/FLASK_SECRET_KEY):
   ```bash
+  $env:APP_PASSWORD="your-password"
+  $env:FLASK_SECRET_KEY="your-random-64-hex"
   python web_app.py
   ```
-- Open http://localhost:5000 in your browser, choose a WAV file, and click Transcribe. The backend signs in with your configured Voiceitt credentials and returns the recognized text.
+- Open http://localhost:5000 in your browser. You’ll see a password screen; on success you reach the ClearSpeak page (`static/index.html`).
+- All protected routes (`/`, `/about`, `/team`, `/upload`, `/api/transcribe`) require the session set after login.
+
+## Deploying on Render (quick)
+- Build command: `pip install -r requirements.txt`
+- Start command: `python web_app.py` (or `gunicorn web_app:app`)
+- Environment vars: `APP_PASSWORD`, `FLASK_SECRET_KEY`, `VOICEITT_APP_ID`, `VOICEITT_API_KEY`, `VOICEITT_EMAIL`, `VOICEITT_PASSWORD` (and `VOICEITT_USER_ID` if you switch to user mode). Free tier is fine for a single user; expect cold starts.
 
 ## Notes
 - Do not commit real credentials; use env vars or a private `.env`.
