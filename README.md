@@ -1,5 +1,7 @@
 # ClearSpeak - Live Audio Transcriber for Atypical Speech Patterns (Python)
 
+> The ClearSpeak system is available at the following link (password required): https://clearspeak.onrender.com
+
 
 ## Demo Video
 
